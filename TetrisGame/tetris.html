@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.js"></script>
+    <!-- <link href="tetris2.css" rel="stylesheet" type="text/css"> -->
+    <script>
+        //테이블 생성
+        var ALL_TD = [];    //모든 테이블 저장된 배열
+        function createTable(col, row) {
+            for (let i = 0; i < 22; i++) {
+                document.write("<tr>");
+                var ALL_X = [];
+                for (let j = 0; j < 12; j++) {
+                    var block_html = `
+                            <td class="space" id="${j}_${i}" x="${j}" y="${i}">
+                                
+                            </td>
+                            `;
+                    document.write(block_html);
+                    ALL_X.push(j + "_" + i);
+                };
+                document.write("</tr>");
+                ALL_TD.push(ALL_X);
+            };
+        };
+
+        //변수
+        //블럭 좌표
+        var ALL_BLOCK = new Array();
+        ALL_BLOCK[0] = [["0:0", "1:0", "2:0", "3:0"], ["0:0", "0:1", "0:2", "0:3"], ["0:0", "1:0", "2:0", "3:0"], ["0:0", "0:1", "0:2", "0:3"]];
+        ALL_BLOCK[1] = [["0:0", "0:1", "1:1", "2:1"], ["0:0", "1:0", "0:1", "0:2"], ["0:0", "1:0", "2:0", "2:1"], ["1:0", "1:1", "0:2", "1:2"]];
+        ALL_BLOCK[2] = [["0:1", "1:1", "2:1", "2:0"], ["0:0", "0:1", "0:2", "1:2"], ["0:0", "1:0", "2:0", "0:1"], ["0:0", "1:0", "1:1", "1:2"]];
+        ALL_BLOCK[3] = [["0:0", "0:1", "1:1", "1:2"], ["1:0", "2:0", "0:1", "1:1"], ["0:0", "0:1", "1:1", "1:2"], ["1:0", "2:0", "0:1", "1:1"]];
+        ALL_BLOCK[4] = [["1:0", "0:1", "1:1", "0:2"], ["0:0", "1:0", "1:1", "2:1"], ["1:0", "0:1", "1:1", "0:2"], ["0:0", "1:0", "1:1", "2:1"]];
+        ALL_BLOCK[5] = [["0:0", "1:0", "0:1", "1:1"], ["0:0", "1:0", "0:1", "1:1"], ["0:0", "1:0", "0:1", "1:1"], ["0:0", "1:0", "0:1", "1:1"]];
+        ALL_BLOCK[6] = [["1:0", "0:1", "1:1", "2:1"], ["0:0", "0:1", "1:1", "0:2"], ["0:0", "1:0", "2:0", "1:1"], ["1:0", "0:1", "1:1", "1:2"]];
+
+        var NOW_BLOCK = {
+            "shape": null,
+            "current_block": null
+        };
+
+        var INIT_X_POSITION = 5;    //초기 블록 x위치
+        var INIT_Y_POSITION = 1;    //초기 블록 y위치
+        var BLOCK_POSITION_SHAPE = null;    //초기 블록 회전
+
+        //블럭 shape 랜덤 생성
+        function randomShape(min, max) {
+            let randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
+            return randomNum;
+        };
+
+        //블럭 생성
+        var NEXT_BLOCK_SHAPE = null;
+        function createNewBlock() {
+            BLOCK_POSITION_SHAPE = 0;   //초기 회전 상태
+            //다음 블럭이 없는 상태라면
+            if (!NEXT_BLOCK_SHAPE) {
+                NOW_BLOCK.shape = randomShape(0, ALL_BLOCK.length - 1);
+                NEXT_BLOCK_SHAPE = randomShape(0, ALL_BLOCK.length - 1);
+            } //다음 블럭이 있다면
+            else {
+                NOW_BLOCK.shape = NEXT_BLOCK_SHAPE;
+                NEXT_BLOCK_SHAPE = randomShape(0, ALL_BLOCK.length - 1);
+            };
+
+            NOW_BLOCK.current_block = displayBlock(NOW_BLOCK);
+
+            showNextBlock(NEXT_BLOCK_SHAPE);    //다음 블럭 미리보기
+        };
+
+        //다음에 나올 블럭 미리보기
+        function showNextBlock(NEXT_BLOCK_SHAPE) {
+            $("#divNextImg").html(`<img src="${NEXT_BLOCK_SHAPE}.gif"/>`);
+        };
+
+        //블럭 출력
+        function displayBlock(NOW_BLOCK) {
+            var current_block = [];
+            for (let i = 0; i < ALL_BLOCK[NOW_BLOCK.shape][BLOCK_POSITION_SHAPE].length; i++) {
+                var block_xy = ALL_BLOCK[NOW_BLOCK.shape][BLOCK_POSITION_SHAPE][i].split(":");
+                var block_x = Number(block_xy[0]) + INIT_X_POSITION;
+                var block_y = Number(block_xy[1]) + INIT_Y_POSITION;
+
+                $("#" + block_x + "_" + block_y).attr("class", "block");
+                current_block.push($("#" + block_x + "_" + block_y));
+            };
+            return current_block;
+        };
+
+        //블럭 이동
+        function moveBlock(key) {
+            if (NOW_BLOCK) {
+                //왼쪽 이동
+                if (key == "left") {
+                    var new_current_block = [];
+                    var is_stop = false;
+                    NOW_BLOCK.current_block.forEach(function (item, index) {
+                        var new_id = (Number(item.attr("x")) - 1) + "_" + item.attr("y");
+
+                        if ($("#" + new_id).length == 0) {
+                            is_stop = true;
+                        }
+                        /* else {
+                            if ($("#" + newId).attr("class") == "block") {
+                                is_stop = true;
+                            };
+                        }; */
+
+                        new_current_block.push($("#" + new_id));
+                    });
+
+                    if (is_stop == true) {
+                        return false;
+                    };
+
+                    NOW_BLOCK.current_block.forEach(function (item, index) {
+                        item.attr("class", "space");
+                    });
+
+                    new_current_block.forEach(function (item, index) {
+                        item.attr("class", "block");
+                    });
+                    NOW_BLOCK.current_block = new_current_block;
+                }
+                //오른쪽 이동
+                else if (key == "right") {
+                    var new_current_block = [];
+                    var is_stop = false;
+                    NOW_BLOCK.current_block.forEach(function (item, index) {
+                        var new_id = (Number(item.attr("x")) + 1) + "_" + item.attr("y");
+                        if ($("#" + new_id).length == 0) {
+                            is_stop = true;
+                        }
+                        else {
+                            // 이미 블럭이거나, 다른 블럭과 충돌하는 경우
+                            if ($("#" + new_id).attr("class") == "block" && !isExistNowBlock(new_id)) {
+                                is_stop = true;
+                            };
+                        }
+
+                        new_current_block.push($("#" + new_id));
+                    })
+
+                    if (is_stop == true) {  //막힌 길이면 중단하기
+                        return false;
+                    }
+
+
+                    NOW_BLOCK.current_block.forEach(function (item, index) {
+                        item.attr("class", "space");
+                    })
+                    new_current_block.forEach(function (item, index) {
+                        item.attr("class", "block");
+                    })
+                    NOW_BLOCK.current_block = new_current_block;
+                }
+                //회전
+                else if (key == "up") {
+                    var is_stop = false;    //멈춤
+                    var new_current_block = [];
+                    BLOCK_POSITION_SHAPE++;
+
+                    if (!ALL_BLOCK[NOW_BLOCK.shape][BLOCK_POSITION_SHAPE]) {
+                        BLOCK_POSITION_SHAPE = 0;
+                    };
+
+                    for (let i = 0; i < ALL_BLOCK[NOW_BLOCK.shape][BLOCK_POSITION_SHAPE].length; i++) {
+                        var current_x = NOW_BLOCK.current_block[0].attr("x");
+                        var current_y = NOW_BLOCK.current_block[0].attr("y");
+
+                        var block_xy = ALL_BLOCK[NOW_BLOCK.shape][BLOCK_POSITION_SHAPE][i].split(":");
+                        var new_x = Number(block_xy[0]) + Number(current_x);
+                        var new_y = Number(block_xy[1]) + Number(current_y);
+                        var new_id = new_x + "_" + new_y;
+
+                        if ($("#" + new_id).length == 0) { //막다른길
+                            is_stop = true;
+                        }
+                        else {
+                            // 이미 블럭이거나, 다른 블럭과 충돌하는 경우
+                            if ($("#" + new_id).attr("class") == "block" && !isExistNowBlock(new_id)) {
+                                is_stop = true;
+                            };
+                        }
+
+                        new_current_block.push($("#" + new_id));
+                    };
+
+                    if (is_stop == true) {
+                        return false;
+                    }
+
+                    NOW_BLOCK.current_block.forEach(function (item, index) {
+                        item.attr("class", "space");
+                    });
+
+                    new_current_block.forEach(function (item, index) {
+                        item.attr("class", "block");
+                    });
+                    NOW_BLOCK.current_block = new_current_block;
+
+                }//아래 이동
+                else if (key == "down") {
+                    moveDown();
+                }
+                else if (key == "spacebar") {
+                    //return 값이 true이면 계속 moveDown()반복
+                    while (moveDown() == true) {
+                    };
+                };
+            }
+        };
+
+        //블럭 아래로 이동
+        function moveDown() {
+            var new_current_block = [];
+            var is_stop = false;
+            NOW_BLOCK.current_block.forEach(function (item, index) {
+                var new_id = item.attr("x") + "_" + (Number(item.attr("y")) + 1);
+
+                if ($("#" + new_id).length == 0) {
+                    is_stop = true;
+                }
+                else {
+                    // 이미 블럭이거나, 다른 블럭과 충돌하는 경우
+                    if ($("#" + new_id).attr("class") == "block" && !isExistNowBlock(new_id)) {
+                        is_stop = true;
+                    };
+                };
+                new_current_block.push($("#" + new_id));
+            });
+
+            var return_value = true;
+            if (is_stop == true) {
+                return_value = false
+
+                //게임종료
+                //현재 블럭 중에 y값이 1이거나 1보다 작은경우
+                NOW_BLOCK.current_block.forEach(function (item, index) {
+                    var y = item.attr("y");
+                    if (y <= 1) {
+                        clearInterval(interval);
+                        alert("게임 종료");
+                        return false;
+                    };
+                });
+            } else {
+                NOW_BLOCK.current_block.forEach(function (item, index) {
+                    item.attr("class", "space");
+                });
+
+                new_current_block.forEach(function (item, index) {
+                    item.attr("class", "block");
+                });
+                NOW_BLOCK.current_block = new_current_block;
+            };
+
+            if (!return_value) {
+                checkAllLine();
+                createNewBlock();
+            };
+            return return_value;
+        };
+
+        //1초에 한 칸씩 블럭 내리기
+        var interval = null;
+        var interval_miliseconds = 1000;
+        var minimal_miliseconds = 100;
+        function intervalDown() {
+            if (interval_miliseconds < minimal_miliseconds) {
+                interval_miliseconds = minimal_miliseconds;
+            };
+
+            interval = setInterval(() => {
+                moveDown();
+            }, interval_miliseconds);
+        };
+
+        //이미 블럭 상태인지 확인
+        function isExistNowBlock(id) {
+            var is_exist = false;
+
+            NOW_BLOCK.current_block.forEach(function (item, index) {
+                if (item.attr("id") == id) {
+                    is_exist = true;    //현재 블럭 상태인 칸임
+                }
+            });
+
+            return is_exist;
+        };
+
+        // 한 줄 채우면 점수 내기
+        function checkAllLine() {
+            //가로 한 줄이 모두 블럭 상태인지 확인
+            for (let row = ALL_TD.length - 1; row >= 0; row--) {    //제일 아랫줄부터 한 칸씩 위로 이동
+                var all_correct = true;
+                for (let col = 0; col < ALL_TD[row].length; col++) {  //제일 왼쪽칸부터 한 칸씩 오른쪽으로 이동
+                    var id = ALL_TD[row][col];
+                    var obj = $("#" + id);
+                    if (obj.attr("class") == "space") {
+                        all_correct = false;
+                    };
+                };
+
+                //한 줄이 모두 블럭 상태라면 그 줄 class 모두 space로 바꾸기
+                if (all_correct) {
+                    for (let j = row; j > 0; j--) {
+                        for (let i = 0; i < ALL_TD[row].length; i++) {
+                            var id = ALL_TD[j][i];
+                            var obj = $("#" + id);
+
+                            //바로 윗줄의 클래스명 구하기
+                            var up_id = ALL_TD[j - 1][i];
+                            var up_obj = $("#" + up_id);
+                            var up_obj_class = up_obj.attr("class");
+
+                            //해당 줄의 클래스를 윗줄의 클래스명으로 바꾸기
+                            obj.attr("class", up_obj_class);
+
+                            if (up_obj.length > 0) {
+                                up_obj.attr("class", "space");
+                            };
+                        };
+                    };
+
+                    row++;
+
+                    //가장 윗줄을 space로 바꾸기
+                    for (let k = 0; k < ALL_TD[0].length; k++) {
+                        var id = ALL_TD[0][k];
+                        var obj = $("#" + id);
+                        obj.attr("class", "space");
+                    };
+
+                    //한 줄 아래로 내리기가 끝나면 1000점 추가
+                    var current_score = $("#score").html();
+                    current_score = Number(current_score) + 1000;
+                    $("#score").html(current_score);
+
+                    // 5000점당 1레벨씩 올리기
+                    if (current_score % 5000 == 0) {
+                        var current_level = $("#level").html();
+                        current_level = Number(current_level) + 1;
+                        $("#level").html(current_level);
+
+                        interval_miliseconds -= 200;
+                        clearInterval(interval);
+                        intervalDown();
+                    };
+                };
+            };
+        };
+
+        $(document).ready(function () {
+            //블럭생성
+            createNewBlock();
+            //1초에 한 칸씩 블럭 내리기
+            intervalDown();
+
+            $(document).keydown(function (e) {
+                if (e.which == 37) {
+                    moveBlock("left");
+                } else if (e.which == 38) {
+                    moveBlock("up");
+                } else if (e.which == 39) {
+                    moveBlock("right");
+                } else if (e.which == 40) {
+                    moveBlock("down");
+                } else if (e.which == 32) {
+                    moveBlock("spacebar");
+                }
+            })
+        })
+
+    </script>
+    <style>
+        #container {
+            width: 509px;
+            height: 550px;
+            margin: 0px auto;
+            margin-top: 50px;
+            display: flex;
+            flex-direction: row;
+        }
+
+        #container #table {
+            height: 550px;
+            /* border-left: 1px solid #98a3f7;
+    border-top: 1px solid #98a3f7;
+    border-right: 1px solid #98a3f7;
+    border-bottom: 1px solid #98a3f7; */
+            float: left;
+            padding: 0px;
+        }
+
+        #container #table table {
+            border: 3px solid skyblue;
+            width: 300px;
+            border-collapse: collapse;
+        }
+
+        .block {
+            width: 25px;
+            height: 25px;
+            border-bottom: 1px solid white;
+            border-right: 1px solid white;
+            background-color: skyblue;
+        }
+
+        .space {
+            width: 25px;
+            height: 25px;
+            /* border-bottom: 1px solid skyblue;
+    border-right: 1px solid skyblue; */
+            background-color: white;
+        }
+
+        #info {
+            width: 200px;
+            height: 550px;
+            background-color: white;
+            float: left;
+            margin-top: 10px;
+        }
+
+        #info #level_container {
+            width: 200px;
+            height: 50px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        #info #score_container {
+            width: 200px;
+            height: 40px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        #info #nextimg_container {
+            width: 200px;
+            height: 30px;
+            text-align: center;
+        }
+
+        #info #divNextImg {
+            width: 200px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #info #key {
+            text-align: center;
+            font-weight: bold;
+            font-size: 26px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <!--게임 테이블-->
+        <div id="table">
+            <!-- 가로 x 세로 : 12 x 22 -->
+            <table cellspacing=0 cellpadding=0 align=center>
+                <script>
+                    createTable(12, 22);
+                </script>
+            </table>
+        </div>
+
+        <div id="info">
+            <!--레벨-->
+            <div id="level_container">
+                <div>Level</div>
+                <div id="level">1</div>
+            </div>
+
+            <!-- 점수 -->
+            <div id="score_container">
+                <div>
+                    Score
+
+                </div>
+                <div id="score">0</div>
+            </div>
+
+            <!-- 다음 블럭 -->
+            <div id="nextimg_container">
+                Next
+            </div>
+            <div id="divNextImg">
+
+            </div>
+            <div id="key">
+                <div style="font-size:12px">(위 화살표: 모양 변경)</div>
+                <div>
+                    ↑ <br>
+                    ← →<br>
+                    ↓
+                </div>
+                <div style="font-size:12px; margin-top:13px">스페이스바 (내리기)</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
