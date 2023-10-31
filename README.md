@@ -1,7 +1,5 @@
 # JungNayoon.github.io
 
 메인페이지
-# https://jungnayoon.github.io/scrollTopBtn
+# https://jungnayoon.github.io/main
 
-테트리스게임
-#https://jungnayoon.github.io/TetrisGame/tetris
