@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shooting Game</title>
+    <link rel="styleSheet" href="shootingGame.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.js"></script>
+</head>
+<body>
+    <div id="button">
+        <p>난이도를 선택하세요</p>
+        <button value="easy" onclick="startGame(value)">하</button>
+        <button value="normal" onclick="startGame(value)">중</button>
+        <button value="hard" onclick="startGame(value)">상</button>
+    </div>
+    <h2 id="info" class="hide">재시작을 원하시면 새로고침 하십시오.</h2>
+    <script src="shootingGame.js"></script>
+</body>
+<style>
+    #button{
+        display: flex;
+        justify-content: flex-start;
+    }
+    #button p{
+        margin-right: 10px;
+        padding: 7px 0;
+        font-size: 15px;
+        font-weight: bold;
+    }
+    #button button{
+        border: transparent;
+        border-radius: 20%;
+        background-color: black;
+        color: white;
+        margin: 10px;
+        width: 50px;
+        padding: 7px 0;
+        font-size: 15px;
+        font-weight: bold;
+    }
+    .hide{
+        display: none;
+    }
+</style>
+</html>
