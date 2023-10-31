@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>지뢰찾기 게임</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.js"></script>
+    <link href="mineSweeper.css?after" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <h4>지뢰찾기</h4>
+    <span>마우스 우클릭 : 물음표, 깃발 표시</span><br>
+    <span>마우스 좌클릭 : 칸 열기</span>
+    <br><br>
+    <!--타이머-->
+    <form id="form">
+        <input id="row" size="3" placeholder="가로줄"/>
+        <input id="cell" placeholder="세로줄"/>
+        <input id="bomb" placeholder="지뢰 개수"/>
+        <br><br>
+        <button>시작</button><button onclick="restart()">재도전</button>
+    </form>
+    <div id="timer"></div>
+    
+    <!--테이블-->
+    <table id="table">
+        <tbody></tbody>
+    </table>
+    
+    <!--결과-->
+    <div id="result"></div>
+    
+</body>
+<script src="mineSweeper.js"></script>
+
+</html>
