@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAIN</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.js"></script>
+    <script src="main/main.js"></script>
+    <link rel="styleSheet" href="main/main.css"/>
+</head>
+
+<body>
+    <div id="wrap">
+        <div id="contents">
+            <div class="title">jQuery 예제</div>
+
+            <div id="navMenu">
+                <div class="menu">예제1</div>
+                <div class="menu">예제2</div>
+                <div class="menu">예제3</div>
+                <div class="menu">예제4</div>
+                <div class="menu">예제5</div>
+                <div class="menu">지뢰찾기게임</div>
+                <div class="menu">숫자야구게임</div>
+                <div class="menu">테트리스</div>
+            </div>
+
+            <div id="checkBox" class="box">
+                <div><input type="checkbox" id="allChk" /><span>모두선택</span></div>
+                <hr style="width: 50%;">
+                <div><input type="checkbox" class="chk" /><span>선택1</span></div>
+                <div><input type="checkbox" class="chk" /><span>선택2</span></div>
+                <div><input type="checkbox" class="chk" /><span>선택3</span></div>
+                <div><input type="checkbox" class="chk" /><span>선택4</span></div>
+            </div>
+
+            <div id="calculator" class="box">
+                <ul>
+                    <li>
+                        <div id="calBtn">계산</div>
+                        <input type="text" id="calInput" />
+                    </li>
+                    <li>
+                        <div>답 : <span id="calResult"></span></div>
+                    </li>
+                </ul>
+            </div>
+
+            <div id="number" class="box">
+                <h4>Number, String, Boolean</h4>
+                <input type="text" placeholder="입력하세요." />
+                <p></p>
+            </div>
+
+            <div id="chat" class="box" style="height: auto; padding: 10px;">
+                <h4 style="margin: 0 0 10px 0;">채팅</h4>
+                <div id="chatRoom" class="box">
+
+                </div>
+                <div style="margin-top: 10px;">
+                    <input type="text" placeholder="입력하세요" style="width: 70%;" />
+                    <button id="send">입력</button>
+                    <button id="reset" hidden>reset</button>
+                </div>
+            </div>
+
+            <div id="size" class="box">
+                <img id="balloon" src="main/balloon.png" style="width: 50px;" />
+                <img id="bomb" src="main/bomb.png" style="width: 150px;" hidden />
+                <div id="bBtn" style="margin: 10px 0;">
+                    <button id="smaller">작게</button>
+                    <button id="bigger">크게</button>
+                </div>
+                <div id="notice" hidden>풍선이 터졌습니다!!</div>
+            </div>
+
+            <div id="btnBox">
+                <button id="topBtn">Top</button>
+                <button id="bottomBtn">Bottom</button>
+            </div>
+        </div>
+    </div>
+    <div id="banner">
+        <div class="greet">감사합니다</div>
+    </div>
+</body>
+
+
+</html>
