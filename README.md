@@ -14,3 +14,5 @@
 [슈팅게임](https://jungnayoon.github.io/shootingGame/shootingGame)<br><br>
 <img src="/image/shootingGame.png" width="200px" alt="shootingGame"></img><br/>
 ***
+[크롬공룡게임](https://jungnayoon.github.io/dinosaurGame/dinosaurGame)<br><br>
+<img src="/image/dinosaurGame.png" width="200px" alt="dinosaurGame"></img><br/>
