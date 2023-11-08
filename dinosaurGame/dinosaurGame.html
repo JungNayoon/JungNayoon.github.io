@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dinosaur Game</title>
+</head>
+<style>
+    #container{
+        padding: 10px;
+    }
+    #retry{
+        display: none;
+        border: transparent;
+        border-radius: 10px;
+        background-color: #af330b;
+        color: white;
+        font-weight: bold;
+        width: 100px;
+        height: 30px;
+        margin-left: 190px;
+        margin-top: 10px;
+    }
+</style>
+<body>
+    <div id="container">
+        <canvas id="canvas"></canvas><br>
+        <button id="retry" onclick="retry()">다시하기</button>
+        <script src="dinosaurGame.js"></script>
+    </div>
+</body>
+
+</html>
