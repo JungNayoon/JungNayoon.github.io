@@ -7,6 +7,7 @@ $(function () {
             $("#topBtn, #bottomBtn").fadeOut();
         }
     })
+    // test
 
     $("#topBtn").on("click", function () {
         $("html, body").animate({
